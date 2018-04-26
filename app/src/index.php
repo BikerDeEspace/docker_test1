@@ -22,12 +22,9 @@
                 id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 libelle VARCHAR(40) NOT NULL);"
             );
-
             $bdd->exec("INSERT INTO test(libelle) VALUES('Libelle dans la base');");
-
+            
             $req = $bdd->query("SELECT * FROM test;")->fetch();
-
-
             echo $req['libelle'];
         ?>
     </body>
