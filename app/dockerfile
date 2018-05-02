@@ -7,5 +7,5 @@ RUN apt-get update && docker-php-ext-install pdo_mysql
 # Copy application source code from "src/" to "/var/www/html"
 COPY src/ /var/www/html/
 
-# Expose port 80 to public
+# Expose port 80
 EXPOSE 80
