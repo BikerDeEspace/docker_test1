@@ -1,15 +1,21 @@
 
 version: "3"
 services:
+
+  # Main application (PHP / Apache)
   app:
-    build: ./app
-    ports:
-      - "8080:80"
-  db:
-    image: mysql:5.7
+    build: ./app 
     restart: always
-    container_name: db
+    ports:
+      # Host : Container
+      - "80:80"
+
+  # Database (Mysql)
+  db:
+    build: ./bdd
+    restart: always
     environment:
+      #Login Password - Database Infos
       MYSQL_DATABASE: app
       MYSQL_USER: app
       MYSQL_PASSWORD: app
