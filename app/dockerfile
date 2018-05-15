@@ -1,11 +1,9 @@
 # Image php:7.0 - Apache
 FROM php:7.0-apache
-
-# Update && pdo install
-RUN apt-get update && docker-php-ext-install pdo_mysql
-
+# Update && pdo install  
+RUN apt-get update && docker-php-ext-install pdo_mysql    
 # Copy application source code from "src/" to "/var/www/html"
 COPY src/ /var/www/html/
-
+#MAINTANER
 # Expose port 80
 EXPOSE 80

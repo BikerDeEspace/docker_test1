@@ -1,7 +1,5 @@
-
 version: "3"
 services:
-
   # Main application (PHP / Apache)
   app:
     build: ./app 
