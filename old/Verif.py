@@ -9,7 +9,7 @@ parser.parse()
 #Checking if errors
 if(parser.hasError()):
     print(parser.error)
-else:
+else:  
     parseResult = parser.fileparsed
 
     from_instruction = False
@@ -19,8 +19,7 @@ else:
     # -- Inst[i][0] = Instruction name (never null)
     # -- Inst[i][1] = arguments list (never null)
     for i in range(0, len(parseResult)):
-        print(parseResult[i])
-        #TODO
+        instruction = parseResult[i][0]
+        params = parseResult[i][1]
 
-
-    
+        print(str(instruction) + ' ' + str(params))

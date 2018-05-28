@@ -1,7 +1,51 @@
+
+
+from pprint import pprint
+from dockerfile_parse import DockerfileParser
+
+
+dfp = DockerfileParser('Dockerfile')
+
+pprint(dfp.structure)
+pprint(dfp.json)
+pprint(dfp.labels)
+
+
+# define the function blocks
+def InstFrom():
+    print("FROM !")
+def InstRun():
+    print ("RUN !")
+def InstMaintainer():
+    print("RUN !")
+def InstExpose():
+    print("RUN !")
+def Instadd():
+    print("RUN !")
+def InstCopy():
+    print("RUN !")
+def InstEntrypoint():
+    print("RUN !")
+def InstCmd():
+    print("RUN !")
+def InstVolume():
+    print("RUN !")
+def InstWorkdir():
+    print("RUN !")
+
+# map the inputs to the function blocks
+options = {
+        'FROM' : InstFrom,
+        'RUN' : InstRun
+}
+
+        options[instruction]()
+
+
 #pyparsing imports
 from pyparsing import ParserElement, ParseFatalException
 from pyparsing import Literal, Group, Regex, White, ZeroOrMore, Optional, lineno
-from pyparsing import stringStart, stringEnd, lineStart, lineEnd
+from pyparsing import stringStart, stringEnd, lineStart, lineEnd, SkipTo
 
 class DockerfileParser:
     def __init__(self):
@@ -39,10 +83,12 @@ class DockerfileParser:
         self.file = FilePath + Filename
 
         try:
-            r = self.grammar.parseFile(self.file)
+            r = self.grammar.parseFile(self.file, True)
             self.fileparsed = r
         except ParseFatalException as e:
             self.error.append(e.msg)
+
+            
 
     def dockerfile_grammar(self):
         """Dockerfile grammar
@@ -53,11 +99,9 @@ class DockerfileParser:
 
         def error(s, loc, expr, err):
             """TODO Improve error messages"""
-
-
-            print()
             error = "Erreur de syntaxe au niveau de la ligne {l}".format(l=lineno(loc, s))
-            raise ParseFatalException(s, loc, error)
+            print(error + ' skip' )
+            SkipTo(EOL)
 
         #INIT
         ParserElement.setDefaultWhitespaceChars(" \t")
@@ -68,11 +112,10 @@ class DockerfileParser:
         STR = Regex(r'\"(.*?)\"').setName('chaîne de caractère')
         NUM = Regex(r'[0-9]+').setName('numérique')
         ARG = Regex(r'\S+').setName('argument')
-        COM = Regex(r'#.*').setName('Commentaire')
-        SEP = White(' ', min=1).suppress().setName('Espace')
+        COM = Regex(r'#.*').setName('commentaire')
+        SEP = White(' ', min=1).suppress().setName('espace')
 
         EOL = lineEnd().suppress()
-        EL  = lineEnd().suppress()
 
         OH = Literal('[').suppress()
         CH = Literal(']').suppress()
@@ -88,20 +131,20 @@ class DockerfileParser:
         continuation = '\\' - lineEnd()
         t_args_list.ignore(continuation)
 
-        t_comment = COM.suppress()
-        t_emptyline = EL.suppress()
+        t_comment = COM.suppress() - EOL
+        t_emptyline = EOL
 
         #SINGLE ARG INSTRUCTIONS
         #FROM Instruction
         t_from_instruction = Literal('FROM') - SEP - Group(ARG) - EOL
-        #VOLUME
-        t_volume_instruction = Literal('VOLUME') - SEP - Group(ARG) - EOL
         #WORKDIR
         t_workdir_instruction = Literal('WORKDIR') - SEP - Group(ARG) - EOL
         #MAINTAINER 
         t_maintainer_instruction = Literal('MAINTAINER') - SEP - Group(ARG) - EOL
 
         #LIST ARG INSTRUCTIONS
+        #VOLUME
+        t_volume_instruction = Literal('VOLUME') - SEP - Group(t_args_table | ARG) - EOL
         #RUN Instruction
         t_run_instruction = Literal('RUN') - SEP - Group(t_args_table | t_args_list) - EOL
         #CMD
@@ -135,6 +178,8 @@ class DockerfileParser:
                 | t_comment
 
         #Grammaire complète
-        dockerfile = stringStart() - ZeroOrMore(t_other | Group(t_instruction)) - stringEnd()
+        dockerfile = stringStart() - ZeroOrMore(t_other | Group(t_instruction.setFailAction(error))) - stringEnd()
         
         return dockerfile
+
+    
