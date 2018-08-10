@@ -26,15 +26,19 @@
                 id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 libelle VARCHAR(40) NOT NULL);"
             );
+            $bdd->exec("CREATE TABLE IF NOT EXISTS test1(
+                id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                libelle VARCHAR(40) NOT NULL);"
+            );
 
             //Insert test element
             $bdd->exec("INSERT INTO test(libelle) VALUES('Libelle dans la base');");
-            
-            //Get test element
             $req = $bdd->query("SELECT * FROM test;")->fetch();
-            
-            //print test element
-            echo $req['libelle'];
+            echo '<p>'. $req['libelle'] . '</p>';
+
+            $bdd->exec("INSERT INTO test1(libelle) VALUES('test1');");
+            $req = $bdd->query("SELECT * FROM test1;")->fetch();
+            echo '<p>'. $req['libelle']. '</p>';
         ?>
     </body>
 </html>

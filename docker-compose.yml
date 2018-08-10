@@ -1,9 +1,8 @@
 version: "2"
 services:
-  # Main application (PHP / Apache)
+  # APPLICATION
   app:
     build: ./app 
-    restart: always
     ports:
       # Host : Container
       - "80:80"
@@ -12,15 +11,21 @@ services:
     volumes:
       - "C:/Users/llegrand/Documents/DockerProjects/simple_docker_application/app/src/:/var/www/html/"
 
-  # Database (Mysql)
+  # KEYS STORAGE
+  keys:
+    build: ./keys
+
+  # DATABASE
   db:
     build: ./bdd
-    restart: always
     environment:
-      #Login Password - Database Infos
       MYSQL_DATABASE: app
       MYSQL_USER: app
       MYSQL_PASSWORD: app
       MYSQL_ROOT_PASSWORD: test
     volumes:
-      - "C:/Users/llegrand/Documents/DockerProjects/simple_docker_application/bdd/volume:/var/lib/mysql"
+      - C:/Users/llegrand/Documents/DockerProjects/simple_docker_application/bdd/volume/:/var/lib/mysql/
+    depends_on:
+      - keys
+    volumes_from:
+      - keys
