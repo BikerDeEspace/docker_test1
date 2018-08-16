@@ -8,6 +8,7 @@
     </head>
 
     <body>
+        Ceci est un test - BDD active
         <?php 
             $bdd = null; 
             //Try connect to database 

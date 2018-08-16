@@ -1,4 +1,4 @@
-FROM nginx
+FROM alpine
 
 # COPY ENCRYPTED KEY
 COPY keys.enc /keys/keys.enc

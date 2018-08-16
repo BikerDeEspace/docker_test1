@@ -1,0 +1,76 @@
+{
+    "AWSEBDockerrunVersion": 2,
+    "volumes": [
+        {
+            "name": "app-volume",
+            "host": {
+                "sourcePath": "/var/app/current/app/src"
+            }
+        },
+        {
+            "name": "db-volume",
+            "host": {
+                "sourcePath": "/var/app/current/bdd/volume"
+            }
+        }
+    ],
+    "containerDefinitions": [
+        {
+            "name": "app",
+            "image": "mayrick/simple_app",
+            "memory": 128,
+            "portMappings": [
+                {
+                  "hostPort": 80,
+                  "containerPort": 80
+                }
+            ],
+            "mountPoints": [
+                {
+                    "sourceVolume": "app-volume",
+                    "containerPath": "/var/www/html/",
+                    "readOnly": false
+                }
+            ],
+            "links": [
+                "db"
+            ]
+        },
+        {
+            "name": "db",
+            "image": "mayrick/simple_app_db",
+            "memory": 128,
+            "portMappings": [
+                {
+                  "hostPort": 3306,
+                  "containerPort": 3306
+                }
+            ],
+            "environment": [
+                { "name": "MYSQL_DATABASE", "value": "app" },
+                { "name": "MYSQL_USER", "value": "app" },
+                { "name": "MYSQL_PASSWORD", "value": "app" },
+                { "name": "MYSQL_ROOT_PASSWORD", "value": "app" }
+            ],
+            "mountPoints": [
+                {
+                    "sourceVolume": "db-volume",
+                    "containerPath": "/var/lib/mysql/",
+                    "readOnly": false
+                }
+            ],
+            "volumesFrom": [
+                {
+                    "readOnly": true,
+                    "sourceContainer": "keys"
+                }
+            ]
+        }, 
+        {
+            "name": "keys",
+            "image": "mayrick/simple_app_keys",
+            "essential": false,
+            "memory": 128
+        }
+    ]
+}
